@@ -1,0 +1,8 @@
+{
+  "httpMethod": "GET",
+  "key": "value",
+  "key2": "value2",
+  "key3": "value3",
+  "other_key": "other_value",
+  "files": {"some":"file"}
+}

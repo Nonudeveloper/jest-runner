@@ -1,0 +1,45 @@
+{
+  "name": "node-lambda-template",
+  "version": "0.0.2",
+  "description": "The bare minimum for a node.js app running on Amazon Lambda. Uses node-lambda under the hood to locally run and also deploy your node.js Amazon Lambda application.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/motdotla/node-lambda-template.git"
+  },
+  "author": "motdotla",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/motdotla/node-lambda-template/issues"
+  },
+  "homepage": "https://github.com/motdotla/node-lambda-template",
+  "scripts": {
+    "setup": "./node_modules/.bin/node-lambda setup",
+    "test": "./node_modules/.bin/node-lambda run",
+    "package": "./node_modules/.bin/node-lambda package",
+    "deploy": "./node_modules/.bin/serverless deploy"
+  },
+  "devDependencies": {
+    "node-lambda": "^0.9.0",
+    "serverless": "^1.28.0"
+  },
+  "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-jest": "^23.4.0",
+    "babel-plugin-module-resolver": "^3.1.1",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-3": "^6.24.1",
+    "babel-preset-vue": "^2.0.2",
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-16": "^1.1.1",
+    "jest": "^23.4.1",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "rimraf": "^2.6.2",
+    "vue": "^2.5.16"
+  }
+}

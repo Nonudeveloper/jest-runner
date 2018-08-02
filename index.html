@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>ALSET Tests</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt"
+    crossorigin="anonymous">
+  <style>
+    @import url(https://fonts.googleapis.com/css?family=Gentium+Book+Basic:400,700);
+
+    * {
+      margin: 0;
+      padding: 0;
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box;
+      outline: none;
+      border: 0;
+    }
+
+    body {
+      background: #252a31;
+      padding-bottom: 100px;
+
+    }
+
+    .super {
+      width: calc(100% - 13px);
+      margin: 0 auto;
+    }
+
+    .disabled-overlay {
+      z-index: 999;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-color: rgba(0, 0, 0, .6);
+      justify-content: center;
+      visibility: hidden;
+      cursor: not-allowed;
+    }
+
+    .disabled-overlay .loader {
+      margin: 0 auto;
+    }
+
+    .c-spinner {
+
+      --spinner-duration: 1.4s;
+      --spinner-color: #124f8e;
+      --spinner-size: 50px;
+      --spinner-width: 5px;
+
+      position: relative;
+      box-sizing: border-box;
+      display: inline-block;
+      height: var(--spinner-size);
+      width: var(--spinner-size);
+      animation: spinner-reveal var(--spinner-duration) steps(1, end) infinite,
+      spinner-rotation var(--spinner-duration) ease-in-out infinite;
+      clip-path: inset(0 0 0 50%);
+    }
+
+    .c-spinner::before,
+    .c-spinner::after {
+      box-sizing: border-box;
+      content: "";
+      width: 100%;
+      height: 100%;
+      border: var(--spinner-width) solid var(--spinner-color);
+      border-radius: 50%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      clip-path: inset(0 50% 0 0);
+      animation: spinner-rotation-a var(--spinner-duration) linear infinite;
+      transition: border-color .5s ease-out;
+    }
+
+    .c-spinner::after {
+      animation-name: spinner-rotation-b;
+    }
+
+    .c-spinner--big {
+      --spinner-size: 64px;
+    }
+
+    /***
+ * Animations
+ */
+
+    @keyframes spinner-rotation {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes spinner-rotation-a {
+      40%,
+      60% {
+        transform: rotate(180deg);
+      }
+      100% {
+        transform: rotate(540deg);
+      }
+    }
+
+    @keyframes spinner-rotation-b {
+      40% {
+        transform: rotate(180deg);
+      }
+      80% {
+        transform: rotate(360deg);
+      }
+      100% {
+        transform: rotate(540deg);
+      }
+    }
+
+    @keyframes spinner-reveal {
+      40% {
+        clip-path: inset(0 0 0 0);
+      }
+      80% {
+        clip-path: inset(0 50% 0 0);
+      }
+    }
+
+    .abs-center {
+      margin: auto;
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      max-width: 796px;
+    }
+
+    .wrap {
+      margin: 0 auto;
+      padding: 20px 0px 20px 0px;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+
+    .wrap .status {
+      font-size: 33px;
+      font-weight: bolder;
+      line-height: 1.7;
+      background-color: white;
+      padding: 0 35px;
+      border-radius: 51px;
+    }
+
+    .wrap .status .success {
+      color: green;
+    }
+
+    .wrap .status .error {
+      color: red;
+    }
+
+    .wrap h2 {
+      font-family: "Gentium Book Basic";
+      font-weight: 900;
+      color: #fff;
+      text-shadow: 0px 1px 0px rgba(0, 0, 0, .1);
+      -webkit-font-smoothing: antialiased;
+      font-size: 3em;
+    }
+
+    #title h3 {
+      font-family: "Gentium Book Basic";
+      font-weight: 900;
+      color: #fff;
+      text-shadow: 0px 1px 0px rgba(0, 0, 0, .1);
+      -webkit-font-smoothing: antialiased;
+      font-size: 2em;
+
+    }
+
+    .wrap p {
+      font-family: "Gentium Book Basic";
+      font-size: 1.5em;
+      color: #b3b9bf;
+      text-shadow: 0px 1px 0px rgba(0, 0, 0, .1);
+      letter-spacing: 1px;
+    }
+
+    .fa {
+      margin-right: 10px;
+    }
+
+    .mainWrap {
+      margin: 0 auto;
+
+    }
+
+    .container {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      height: calc(100vh - 171px);
+      min-height: 500px;
+    }
+
+    .container .sidebar {
+      background-color: #353c46;
+      width: 20%;
+      display: flex;
+      flex-direction: column;
+      overflow: auto;
+      height: 100%;
+      /* height: calc(100vh - 230px); */
+      min-height: 400px;
+    }
+
+    .container .editor {
+      width: 80%;
+      height: 100%;
+    }
+
+    #editor {
+      height: 100%;
+    }
+
+    .container .section {
+      padding: 10px;
+      width: 50% !important;
+    }
+
+    .file1,
+    .file2 {
+      width: 100%;
+      border: 0;
+      margin-bottom: 2px;
+      background: #fff;
+      padding: 20px;
+      font-size: 1.2em;
+      font-family: "Gentium Book Basic";
+      box-shadow: 4px 4px 0px rgba(0, 0, 0, .1);
+      color: #111;
+    }
+
+    .pointer {
+      cursor: pointer;
+    }
+
+    .active-file {
+      background-color: #124f8e;
+      color: white;
+
+    }
+
+    ::-webkit-input-placeholder {
+      color: #696969;
+    }
+
+    :-moz-placeholder {
+      color: #696969;
+    }
+
+    ::-moz-placeholder {
+      color: #696969;
+    }
+
+    :-ms-input-placeholder {
+      color: #696969;
+    }
+
+    .file1 {
+      float: left;
+    }
+
+    .file2 {
+      float: right;
+    }
+
+    .mainArea {
+      width: 100%;
+      box-shadow: 4px 4px 0px rgba(0, 0, 0, .1);
+      margin-bottom: 2px;
+      padding: 20px;
+      font-family: "Gentium Book Basic";
+      color: #111;
+      height: 100%;
+      min-height: 400px;
+      resize: none;
+      background-color: white;
+      overflow-y: auto;
+      font-size: 16px !important;
+    }
+
+    .section i {
+      color: #124f8e;
+    }
+
+    .bigBtn {
+      width: 300px;
+      float: right;
+      padding: 15px;
+      text-align: center;
+      margin-top: 20px;
+      font-size: 2em;
+      font-family: "Gentium Book Basic";
+      background: #124f8e;
+      color: #fff;
+      cursor: pointer;
+      margin-right: 5px;
+    }
+
+    .p-10 {
+      padding: 10px;
+    }
+
+    #githubForm {
+      display: flex;
+      height: 64px;
+      flex-direction: row;
+      padding: 0 10px;
+      min-width: 550px;
+      transition: all 2s ease-in-out;
+    }
+
+    #githubForm input {
+      float: left;
+      height: 100%;
+      width: calc(100% - 80px);
+    }
+
+    #githubForm button {
+      float: left;
+      width: 80px;
+      margin-top: 0;
+      padding: 13px;
+      height: 100%;
+      margin: 0px;
+    }
+
+    .notification {
+      position: fixed;
+      top: 50px;
+      right: 50px;
+      padding: 20px;
+      background-color: rgb(255, 255, 255);
+      box-shadow: 4px 4px 6px 1px rgba(18, 79, 142, 1);
+      z-index: 9999;
+    }
+
+    #result-div {
+      background-color: #353c46;
+      margin: 10px 0px;
+      font-family: monospace;
+    }
+
+    #result-div .log {
+      display: flex;
+      color: white;
+      font-size: 14px;
+      padding: 6px;
+      background-color: #252a31;
+      border-bottom: solid 1px #353c46;
+    }
+
+    #result-div .log-status {
+      width: 50px;
+      text-align: center
+    }
+
+    #result-div .log-time {
+      width: 80px;
+      text-align: center
+    }
+
+    #result-div .log .log-describe {
+      width: 225px;
+    }
+
+    #result-div .log-expect {
+      width: calc(100% - 355px);
+    }
+
+    #result-div .error {
+      color: red;
+    }
+
+    #result-div .success {
+      color: green;
+    }
+
+    #result-div .log-err {
+      border-bottom: solid 1px #353c46;
+    }
+
+    /* #result-div .log-err pre {
+      font-size: 12px !important;
+    } */
+
+    #result-div .console {
+      color: white;
+      background-color: #0b0b0b;
+      padding: 10px;
+      font-size: 12px !important;
+      line-height: 1.5;
+    }
+
+    /* Landscape mobile & down */
+
+    @media (max-width: 50em) {
+      .container {
+        display: flex;
+        flex-direction: column;
+      }
+      .container .section {
+        padding: 10px;
+        width: 100% !important;
+      }
+      .wrap {
+        flex-direction: column;
+      }
+      .wrap h2 {
+        font-size: 2.3em;
+        letter-spacing: 0;
+      }
+
+      .wrap p {
+        font-size: 1.1em;
+        line-height: 1.4em;
+      }
+
+      .file1,
+      .file2 {
+        width: 100%;
+      }
+
+      /* .file2 {
+      }
+
+      .bigBtn {
+      } */
+      .wrap .status {
+        font-size: 25px;
+      }
+      #githubForm {
+        width: auto;
+      }
+
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.3.3/ace.js" integrity="sha256-NLPE2EQpOtxTAUB/jxjM97jsGmVQopiX8ceHySHhXs8="
+    crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <div class="notification" hidden>
+   message
+  </div>
+  <div class="super">
+    <div class="wrap">
+      <div id="title">
+        <h2>ALSET Jest Problem</h2>
+        <p>Write your code to pass tests.</p>
+      </div>
+      <div id="githubForm" class="abs-center">
+        <input placeholder="Enter github URL" name="file2Name" value="" type="text" class="file2" />
+        <button class="bigBtn" id="github">
+          <i class="fab fa-github"></i>
+        </button>
+      </div>
+    </div>
+    <div id="title" class="">
+      <h3 style="color:#b3b9bf;padding:2px"></h3>
+    </div>
+  </div>
+
+  <div class="mainWrap" id="editor-panel" hidden>
+    <div class="container" id="container">
+      <div class="sidebar">
+
+      </div>
+      <div class="editor">
+        <div id="editor" class="mainArea"></div>
+      </div>
+    </div>
+    <!-- <button class="bigBtn" id="addFileBtn"> Add File</button> -->
+    <div style="height: 97px">
+      <button class="bigBtn" id="saveFileBtn"> Save File </button>
+      <button class="bigBtn" id="postButton"> Run Tests</button>
+    </div>
+
+  </div>
+  <div id="result-div" hidden>
+    <div class="wrap p-10">
+      <h2>Test Result</h2>
+      <div id="result-status" class="status">
+        <span class="error">
+        </span>
+        <span class="success">
+        </span>
+      </div>
+    </div>
+    <div class="result-logs">
+
+    </div>
+    <div class="mainWrap">
+      <h4 style="color: white; padding: 11px;">Complete Logs </h4>
+      <pre class="console" id="result-text"></pre>
+    </div>
+  </div>
+  <div id="loader" class="disabled-overlay" hidden>
+    <span class="loader c-spinner"></span>
+  </div>
+  <script>
+    const extensions = {
+      js: 'javascript',
+      py: 'python',
+      ts: 'typescript',
+      jsx: 'javascript'
+    };
+    class App {
+      constructor() {
+        /********** Add Github Acess Token Here **********/
+        this._accessToken ='<github_access_token>';
+        /************************************************/
+
+        this._editor = ace.edit('editor');
+        this._errorFont = '<i class="fas fa-times-circle"></i>';
+        this._successFont = '<i class="fas fa-check-circle"></i>';
+        this._serverUrl = '/dev/helloTest';
+        this._githubServerURL = 'https://api.github.com';
+        this._githubBaseURL = 'https://github.com/';
+        this._rawGitURL = 'https://raw.githubusercontent.com';
+    
+        this._repoOwner = null;
+        this.repoName = null;
+        this._repoPath = null
+        this._selectedFile = null;
+        this._files = [];
+
+        this._resultEle = document.getElementById('result-div');
+        this._resultTextEle = document.getElementById('result-text');
+        this._loaderEle = document.getElementById('loader');
+        this._errorEle = document.querySelector('.error');
+        this._successEle = document.querySelector('.success');
+        this._githubURLEle = document.querySelector('#githubForm input');
+        this._headerTitleEle = document.querySelector('#title h3');
+        this._notificationEle = document.querySelector('.notification');
+        
+        this.setEditorOptions(this._editor, '', 'js', true);
+      }
+      setEditorOptions(editor, value = '', ext = 'js', readOnly = false) {
+        editor.session.setMode(`ace/mode/${ext}`);
+        editor.session.setTabSize(4);
+        editor.setValue(value);
+        editor.setReadOnly(readOnly);
+        editor.gotoLine(1);
+        editor.setShowPrintMargin(false);
+        editor.getSession().setUndoManager(new ace.UndoManager());
+        return editor;
+      }
+      showNotification(msg, time = 3000) {
+        this._notificationEle.innerHTML = msg;
+        this._notificationEle.removeAttribute('hidden');
+        setTimeout(() => {
+          this._notificationEle.innerHTML = '';
+          this._notificationEle.setAttribute('hidden', true);
+        }, time)
+      }
+      setHeaderTitle() {
+        let filePath = '';
+        if (this._selectedFile) {
+          filePath = `/<span style="color:white">${this._selectedFile.path}</span>`
+        }
+        this._headerTitleEle.innerHTML = `${this._repoOwner}/${this._repoName}${filePath}`;
+      }
+      getFileNameFromPath(file) {
+        return this._repoPath ? file.path.replace(`${this._repoPath.slice(1)}/`, '') : file.path;
+      }
+      postFiles() {
+        this.hideResult();
+        this.saveFile();
+        let body = {}
+        if (this._files.length === 0) {
+          return;
+        }
+        this._files.forEach(file => {
+          if (file.type !== 'dir') {
+            const fileName = this.getFileNameFromPath(file);
+            body[fileName] = file.code;
+          }
+        })
+        this.showLoader();
+        fetch(this._serverUrl, {
+          method: 'POST',
+          body: JSON.stringify({ files: body }),
+          headers: {
+            "Content-Type": "application/json; charset=utf-8",
+          },
+        })
+          .then(response => response.json())
+          .then(data => {
+            console.log(data);
+            this.showResult(data.results);
+            this.hideLoader();
+          })
+          .catch(err => {
+            this.handleError(err);
+            this.showResult(err.message);
+          })
+      }
+      showLoader() {
+        this._loaderEle.style.visibility = 'visible';
+      }
+      hideLoader() {
+        this._loaderEle.style.visibility = 'hidden';
+      }
+
+      handleError(err = {}) {
+        console.log(err);
+        this.showNotification('Error');
+        this.hideLoader();
+      }
+
+      fetchGithubData() {
+        const url = this._githubURLEle.value;
+        if (url) {
+          if (!url.includes(this._githubBaseURL)) {
+            this.showNotification('Not a Valid Github URL', 5000);
+            return;
+          }
+          this.showLoader();
+          const params = url.replace(this._githubBaseURL, '').split('/');
+          let repoOwner = params[0];
+          let repoName = params[1];
+          let subPath = '';
+          if (params.length > 4) {
+            for (let i = 4; i < params.length; i++) {
+              subPath = `${subPath}/${params[i]}`;
+            }
+          }
+          this.fetchFromURL(`${this._githubServerURL}/repos/${repoOwner}/${repoName}/contents${subPath}`)
+            .then(files => {
+              if (files && files.length) {
+                this.hideResult();
+                this._repoOwner = repoOwner;
+                this._repoName = repoName;
+                this._repoPath = subPath;
+                this.setHeaderTitle();
+                this._selectedFile = null;
+                this._editor.setValue('');
+                document.getElementById('githubForm').removeAttribute('class');
+                this._files = files;
+                this.renderFiles();
+                this.fetchWholeTree(-1);
+                document.getElementById('editor-panel').removeAttribute('hidden');
+              } else {
+                this.handleError();
+              }
+            })
+            .catch(err => this.hideLoader(err))
+        } else {
+          this.showNotification('Please Enter Github URL');
+        }
+      }
+      fetchFromURL(url) {
+        return fetch(`${url}?access_token=${this._accessToken}`)
+          .then(response => response.json())
+      }
+      fetchWholeTree(fileIndex = -1) {
+        let folderToFetch = null;
+        for (let index in this._files) {
+          const file = this._files[index];
+          if (file.type == 'dir' && parseInt(index) > parseInt(fileIndex)) {
+            folderToFetch = { ...file, index };
+            break;
+          }
+        }
+        if (folderToFetch) {
+          this.fetchFromURL(`${this._githubServerURL}/repos/${this._repoOwner}/${this._repoName}/contents/${folderToFetch.path}`)
+            .then(tree => {
+              if (tree && tree.length) {
+                this._files = [...this._files, ...tree];
+                this.renderFiles();
+                this.fetchWholeTree(folderToFetch.index);
+              } else {
+                this.handleError();
+              }
+            })
+            .catch(err => this.hideLoader(err))
+        } else {
+          // this.hideLoader();
+          this.fetchWholeCode();
+        }
+      }
+      fetchWholeCode(fileIndex = -1) {
+        let fileToFetch = null;
+        for (let index in this._files) {
+          const file = this._files[index];
+          if (file.type !== 'dir' && parseInt(index) > parseInt(fileIndex)) {
+            fileToFetch = { ...file, index };
+            break;
+          }
+        }
+        if (fileToFetch) {
+          fetch(`${this._rawGitURL}/${this._repoOwner}/${this._repoName}/master/${fileToFetch.path}`)
+            .then(response => response.text())
+            .then(code => {
+              this._files[fileToFetch.index] = { ...this._files[fileToFetch.index], code };
+              this.fetchWholeCode(fileToFetch.index);
+            })
+            .catch(err => {
+              console.log(err);
+              this.showNotification('err');
+              this.hideLoader();
+            })
+        } else {
+          console.log(this._files);
+          if (this._files.length > 0) {
+            this.openFile(this._files[0].path);
+          }
+          this.hideLoader();
+        }
+      }
+      renderFiles() {
+        this.setHeaderTitle();
+        document.querySelector('#container .sidebar').innerHTML = '';
+        this._files.forEach(file => this.renderFile(file));
+      }
+      renderFile(file) {
+        if (file.type !== 'dir') {
+          const html = `<a class="file1 pointer ${this._selectedFile && this._selectedFile.path === file.path ? 'active-file' : ''}" onclick="openFile('${file.path}')"><i class="fas fa-file-alt" ></i> ${this.getFileNameFromPath(file)}</a>`;
+          document.querySelector('#container .sidebar').innerHTML += html;
+        }
+      }
+      openFile(filePath) {
+        const selectedFile = this._files.find(file => file.path === filePath);
+        if (selectedFile) {
+          if (this._selectedFile && this._selectedFile.path !== filePath) {
+            const editorValue = this._editor.getValue();
+            if (editorValue !== this._selectedFile.code) {
+              const hasOk = confirm("Do you want to save changes?");
+              if (hasOk) {
+                this.saveFile();
+              }
+            }
+          }
+          const exts = filePath.split('.');
+          let ext = exts[exts.length - 1];
+          ext = extensions[ext] ? extensions[ext] : ext;
+          this._editor = this.setEditorOptions(this._editor, selectedFile.code, ext);
+          this._selectedFile = selectedFile;
+          this.renderFiles();
+        }
+      }
+      saveFile() {
+        if (this._selectedFile) {
+          const newCode = this._editor.getValue();
+          this._files = this._files.map(file => {
+            if (file.path === this._selectedFile.path) {
+              return {
+                ...file, code: newCode
+              }
+            }
+            return file;
+          })
+          this.showNotification(`${this._selectedFile.path} is saved`);
+        }
+      }
+      showResult(data) {
+        if ((typeof data) === 'object') {
+          const text = JSON.stringify(data, null, '\t');
+          let completeErrorHtml = '';
+          for (let t of data.testResults) {
+            completeErrorHtml += t.failureMessage;
+          }
+          this._resultTextEle.innerHTML = data.success ? 'All tests passed.' : completeErrorHtml;
+          this._errorEle.innerHTML = data.numFailedTests + ' ' + this._errorFont;
+          this._successEle.innerHTML = data.numPassedTests + ' ' + this._successFont;
+          this._resultEle.removeAttribute('hidden');
+          let html = '';
+          for (let r of data.testResults || []) {
+            for (let result of r.testResults || []) {
+              html += `<div class="log">
+                    <div class="log-status ${result.status === 'failed' ? 'error' : 'success'}">
+                      <i class="fas ${result.status === 'failed' ? "fa-times-circle" : 'fa-check-circle'}"></i>
+                    </div>
+                    <div class="log-describe ${result.status === 'failed' ? 'error' : 'success'}">
+                      ${result.ancestorTitles && result.ancestorTitles.length ? result.ancestorTitles.reduce((a, b) => a + ' ' + b) : ''}
+                    </div>
+                    <div class="log-expect">
+                      ${result.title}
+                    </div>
+                    <div class="log-time">
+                      ${result.duration} ms
+                    </div>
+                  </div>
+                `;
+              if (result.failureMessages.length > 0) {
+                html += `<div class="log-err console">
+                  <pre>${result.failureMessages}</pre>
+                </div>`
+              }
+            }
+          }
+
+          document.querySelector('.result-logs').innerHTML = html;
+        } else {
+          this._resultEle.removeAttribute('hidden');
+          document.querySelector('.result-logs').innerHTML = data;
+        }
+        window.scrollTo(0, 900);
+      }
+      hideResult() {
+        this._resultEle.setAttribute('hidden', true);
+        document.querySelector('.result-logs').innerHTML = "";
+        this._resultTextEle.innerHTML='';
+      }
+
+    }
+    const app = new App();
+
+    document.getElementById('postButton').addEventListener('click', (e) => app.postFiles());
+    document.querySelector('#githubForm button').addEventListener('click', (e) => app.fetchGithubData());
+    document.getElementById('saveFileBtn').addEventListener('click', (e) => app.saveFile());
+    const openFile = filePath => app.openFile(filePath);
+
+  </script>
+
+</body>
+
+</html>
